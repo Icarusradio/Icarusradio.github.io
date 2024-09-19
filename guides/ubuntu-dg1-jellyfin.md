@@ -2,6 +2,9 @@
 layout: default
 ---
 # Ubuntu 22.04 下修改驱动使 Intel DG1 可以在 Jellyfin 下解码
+## 9.19 更新
+目前 Linux 内核从 6.8 版本开始，提供了新的 `xe` 内核驱动。这个驱动可以支持 DG1 一些解码功能，并且不需要编译 iHD 驱动和安装特定内核。但是目前 Jellyfin 不支持使用 `xe` 内核模块进行解码（[参考](https://github.com/jellyfin/jellyfin/issues/11485)），所以想使用 Jellyfin 进行解码仍需要下述步骤。
+
 ## 起因
 最近看了皮蛋熊大佬的直通 DG1 教程（[NAS独显转码新王晋级， Intel DG1驱动第二阶段，PVE内核+群晖SA6400驱动分享！](https://www.bilibili.com/video/BV1wb4y1G7kF)）自己也入手了一块 DG1。
 
@@ -514,4 +517,20 @@ sudo make install
 
 这里用词使用 “构建” 而不是 “编译”，因为这里只是将 Intel 公布的源代码塞入 deb 安装包，并没有编译的过程。
 
-以目前（2024 年 9 月 19 日）最新 Rolling 版本 [I915_24WW33.3_950.13_24.4.12_240603.18](https://github.com/intel-gpu/intel-gpu-i915-backports/releases/tag/I915_24WW33.3_950.13_24.4.12_240603.18) 为例，首先下载这个 tag 对应的代码
+以目前（2024 年 9 月 19 日）最新 Rolling 版本 [I915_24WW33.3_950.13_24.4.12_240603.18](https://github.com/intel-gpu/intel-gpu-i915-backports/releases/tag/I915_24WW33.3_950.13_24.4.12_240603.18) 为例。首先下载这个 tag 对应的代码，点击 `Source code (tar.gz)` 下载源代码。
+
+然后安装打包所需的依赖：
+
+```bash
+sudo apt install dkms make debhelper devscripts build-essential flex bison mawk
+```
+
+然后解压并打包 DKMS 安装包：
+
+```bash
+tar xf intel-gpu-i915-backports-I915_24WW33.3_950.13_24.4.12_240603.18.tar.gz
+cd intel-gpu-i915-backports-I915_24WW33.3_950.13_24.4.12_240603.18
+make i915dkmsdeb-pkg OS_DISTRIBUTION=UBUNTU_22.04_DESKTOP
+```
+
+这里我们选择 `UBUNTU_22.04_DESKTOP`，这个对应的内核版本是 6.5，如果想要打包 6.8 版本对应的 DKMS 就选择 `UBUNTU_24.04_DESKTOP` 或者 `UBUNTU_24.04_SERVER`，`UBUNTU_22.04_SERVER` 对应的内核版本是 5.15，不建议选择。等待命令执行结束，生成的 deb 安装包就在这个文件夹的上一级目录。
