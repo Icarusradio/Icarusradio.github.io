@@ -474,11 +474,44 @@ strip ../install_media/usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so            
 #### 手动编译安装 Gmmlib 和 Libva
 相比上个方法，这个方法并不推荐，因为手动安装的不方便用包管理器进行管理，只推荐在上个方法失败时使用。由于手动安装会影响包管理器，建议使用虚拟机编译，并在编译之前创建一个快照备份。编译完成后可以通过快照恢复至编译前状态。
 
-*待施工*
+以目前（2024 年 9 月 19 日）最新版本 [24.2.5](https://github.com/intel/media-driver/releases/tag/intel-media-24.2.5) 为例，发行日志写明依赖项如下：
+
+> Dependencies
+>   - GmmLib: [intel-gmmlib-22.3.20](https://github.com/intel/gmmlib/releases/tag/intel-gmmlib-22.3.20)
+>   - Libva: [2.22.0](https://github.com/intel/libva/releases/tag/2.22.0)
+
+点开链接后均选择 `Source code (tar.gz)` 下载源代码。先安装编译 `libva` 所需要的软件包：
+
+```bash
+sudo apt install cmake pkg-config meson libdrm-dev automake libtool
+```
+
+然后解压源代码包，并开始编译：
+
+```bash
+tar xf libva-2.22.0.tar.gz
+cd libva-2.22.0
+./autogen.sh --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu
+make
+sudo make install
+```
+
+之后解压并编译 `gmmlib` ：
+
+```bash
+tar xf gmmlib-intel-gmmlib-22.3.20.tar.gz
+cd gmmlib-intel-gmmlib-22.3.20
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j"$(nproc)"
+sudo make install
+```
+
+之后就和上述一样编译 `media-driver` 并提取 `iHD_drv_video.so` 即可。
 
 ### 构建 DKMS 安装包
-之前提过 Intel 官方有三个版本：Rolling, Production 和 Long Term Support (LTS)。但是软件仓库却只有 Rolling 和 LTS，如何安装 Production 版呢？可以通过自行打包 DKMS 安装包来实现。
+之前提过 Intel 官方有三个版本：Rolling, Production 和 Long Term Support (LTS)。但是软件仓库却只有 Rolling 和 LTS，如何安装 Production 版呢？或者 GitHub 上 Rolling 版已更新，但是仓库里并没有。这些问题都可以通过自行打包 DKMS 安装包来实现。
 
-这里用词使用 “构建” 而不是 “编译”，因为这里只有打包的过程，只是将 Intel 公布的源代码塞入 deb 安装包，并没有编译的过程。
+这里用词使用 “构建” 而不是 “编译”，因为这里只是将 Intel 公布的源代码塞入 deb 安装包，并没有编译的过程。
 
-*待施工*
+以目前（2024 年 9 月 19 日）最新 Rolling 版本 [I915_24WW33.3_950.13_24.4.12_240603.18](https://github.com/intel-gpu/intel-gpu-i915-backports/releases/tag/I915_24WW33.3_950.13_24.4.12_240603.18) 为例，首先下载这个 tag 对应的代码
