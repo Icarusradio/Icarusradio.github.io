@@ -3,7 +3,7 @@ layout: default
 ---
 # Ubuntu 22.04 下修改驱动使 Intel DG1 可以在 Jellyfin 下解码
 ## 10.27 更新
-Jellyfin 目前最新版本 10.10 已经支持使用 `xe` 内核驱动，具体请参考[使用内核 xe 驱动使 Intel DG1 可以在 Jellyfin 下解码](../xe-dg1-jellyfin)。如果之前按照这个教程配置过 Ubuntu，请先删除 `intel-i915-dkms` 和 `intel-fw-gpu` 两个包，将内核退回发行版提供的版本。如果希望节省空间，也可以将额外安装的 6.5 内核一并删除。
+Jellyfin 目前最新版本 10.10 已经支持使用 `xe` 内核驱动，具体请参考[使用内核 xe 驱动使 Intel DG1 可以在 Jellyfin 下解码](./xe-dg1-jellyfin)。如果之前按照这个教程配置过 Ubuntu，请先删除 `intel-i915-dkms` 和 `intel-fw-gpu` 两个包，将内核退回发行版提供的版本。如果希望节省空间，也可以将额外安装的 6.5 内核一并删除。
 
 ## 9.19 更新
 目前 Linux 内核从 6.8 版本开始，提供了新的 `xe` 内核驱动。这个驱动可以支持 DG1 一些解码功能，并且不需要编译 iHD 驱动和安装特定内核。但是目前 Jellyfin 不支持使用 `xe` 内核模块进行解码（[参考](https://github.com/jellyfin/jellyfin/issues/11485)），所以想使用 Jellyfin 进行解码仍需要下述步骤。

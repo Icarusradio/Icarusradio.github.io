@@ -3,7 +3,7 @@ layout: default
 ---
 # 使用内核 xe 驱动使 Intel DG1 可以在 Jellyfin 下解码
 ## 背景
-Linux 内核在 6.8 版本引入了 `xe` 内核模块（[参考](https://www.phoronix.com/news/Linux-6.8-Released)），来支持 Intel 较新的显卡，DG1 也包括在内。而在 2024 年 10 月 26 日，Jellyfin 官方更新到 [10.10](https://jellyfin.org/posts/jellyfin-release-10.10.0) 版本，正式支持内核 `xe` 驱动。所以目前使用内核版本大于等于 6.8 的 Linux 发行版（例如 [Arch Linux](https://archlinux.org/) 和 [Ubuntu](https://ubuntu.com/)）可以直接使用 DG1 在 Jellyfin 下转码，而不需要像之前一样安装 backport i915 的内核和修改驱动（参见：[Ubuntu 22.04 下修改驱动使 Intel DG1 可以在 Jellyfin 下解码](../ubuntu-dg1-jellyfin)）。本文以 Ubuntu Server 22.04 LTS 为例，介绍如何安装 6.8 内核并开启 Jellyfin 硬件转码。
+Linux 内核在 6.8 版本引入了 `xe` 内核模块（[参考](https://www.phoronix.com/news/Linux-6.8-Released)），来支持 Intel 较新的显卡，DG1 也包括在内。而在 2024 年 10 月 26 日，Jellyfin 官方更新到 [10.10](https://jellyfin.org/posts/jellyfin-release-10.10.0) 版本，正式支持内核 `xe` 驱动。所以目前使用内核版本大于等于 6.8 的 Linux 发行版（例如 [Arch Linux](https://archlinux.org/) 和 [Ubuntu](https://ubuntu.com/)）可以直接使用 DG1 在 Jellyfin 下转码，而不需要像之前一样安装 backport i915 的内核和修改驱动（参见：[Ubuntu 22.04 下修改驱动使 Intel DG1 可以在 Jellyfin 下解码](./ubuntu-dg1-jellyfin)）。本文以 Ubuntu Server 22.04 LTS 为例，介绍如何安装 6.8 内核并开启 Jellyfin 硬件转码。
 
 ## 安装 6.8 内核
 如果 Ubuntu 在安装时选择的是 HWE 内核，那么有可能通过 apt 更新就可以安装 6.8 内核。首先命令行执行 `uname -r` 查看内核版本号，如果返回结果类似 `6.8.0-47-generic`，证明已经安装 6.8 内核了，可以跳过这一步。如果返回版本不是，请按照下述步骤安装 6.8 内核。
